@@ -30,6 +30,41 @@
           </exclusion>
         </exclusions>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-all -->
+    <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-all</artifactId>
+        <version>1.3</version>
+        <scope>test</scope>
+    </dependency>
+
+    
+    <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.18.8</version>
+        <scope>provided</scope>
+    </dependency>
+
+
+    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.15</version>
+    </dependency>
+
+    <!-- JPA 구현체인 Hibernate 라이브러리 -->
+    <!-- hibernate-entitymanager를 내려받는다면, hibernate-core와 hibernate-jpa-2.1-api도 함께 내려받는다. -->
+    <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-entitymanager -->
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-entitymanager</artifactId>
+        <version>5.4.2.Final</version>
+    </dependency>
+    <!-- JPA 구현체인 Hibernate 라이브러리 -->
   </dependencies>
 
   <build>
@@ -78,4 +113,8 @@
       </plugin>
     </plugins>
   </build>
+
+  <reporting>
+    
+  </reporting>
 </project>

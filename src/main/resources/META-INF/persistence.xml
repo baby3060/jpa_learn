@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://xmlns.jcp.org/xml/ns/persistence" 
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence 
+                        http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+>
+    <persistence-unit name="learningPersistance">
+        <properties>
+            <!-- db 커넥션 정보 -->
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3307/jpa_db?characterEncoding=UTF-8" />
+            <property name="javax.persistence.jdbc.user" value="jpa" />
+            <property name="javax.persistence.jdbc.password" value="jpadb" />
+            <!-- db 커넥션 정보 -->
+            
+            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.format_sql" value="true" />
+            <property name="dialect" value="org.hibernate.dialect.MySQLDialect" />
+
+            <!-- db pool -->
+            <property name="connection.provider_class" value="org.hibernate.connection.C3P0ConnectionProvider" />
+            <property name="hibernate.c3p0.acquire_increment" value="1" />
+            <property name="hibernate.c3p0.idle_test_period" value="60" />
+            <property name="hibernate.c3p0.min_size" value="1" />
+            <property name="hibernate.c3p0.max_size" value="2" />
+            <property name="hibernate.c3p0.max_statements" value="50" />
+            <!-- db pool -->
+        </properties>
+    </persistence-unit>
+</persistence>
