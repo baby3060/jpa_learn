@@ -57,6 +57,54 @@ public class MemberJpaTest {
     }
 
     @Test
+    public void updateTest() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        Member member1 = new Member("1", "테스트1", 1, "패스워드1");
+        Member member2 = new Member("2", "테스트2", 2, "패스워드2");
+        Member member3 = new Member("3", "테스트3", 3, "패스워드3");
+
+        try {
+            tx.begin();
+
+            em.persist(member1);
+            em.persist(member2);
+            em.persist(member3);
+
+            em.flush();
+
+            Member m1 = em.find(Member.class, "1");
+            Member m2 = em.find(Member.class, "2");
+            Member m3 = em.find(Member.class, "3");
+
+            assertMember(member1, m1);
+            assertMember(member2, m2);
+            assertMember(member3, m3);
+
+            m1.setUserName("테스트1(수정)");
+
+            em.flush();
+
+            Member mUpdate1 = em.find(Member.class, "1");
+
+            assertThat(mUpdate1.getUserName(), is(m1.getUserName()));
+            // member1의 값은 바꾸지 않았는데 member1도 '테스트1(수정)'로 바뀌었다(캐시).
+            // Fail
+            // assertThat(member1.getUserName(), is(not(mUpdate1.getUserName())));
+            assertThat(member1.getUserName(), is(mUpdate1.getUserName()));
+
+            member1.setUserName("테스트1");
+
+            // find로 불러온 데이터가 아니어도 해당 데이터를 수정하면, find로 불러온 데이터가 수정됨
+            assertThat(member1.getUserName(), is(mUpdate1.getUserName()));
+        } finally {
+            tx.rollback();
+            em.close();
+        }
+    }
+
+    @Test
     public void countTest() {
         EntityManager em = emf.createEntityManager();
 
