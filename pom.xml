@@ -64,6 +64,15 @@
         <artifactId>hibernate-entitymanager</artifactId>
         <version>5.4.2.Final</version>
     </dependency>
+
+    <!-- Hibernate에서 POOL을 관리하기 위해 c3p0 설정 시 -->
+    <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-c3p0 -->
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-c3p0</artifactId>
+        <version>5.4.2.Final</version>
+    </dependency>
+
     <!-- JPA 구현체인 Hibernate 라이브러리 -->
 
     <!-- Logging 남기기 위한 라이브러리 -->
@@ -95,6 +104,15 @@
         <version>1.7.26</version>
     </dependency>
     <!-- Logging 남기기 위한 라이브러리 -->
+
+    <!-- https://mvnrepository.com/artifact/com.mchange/c3p0 -->
+    <!-- Connection Pool -->
+    <dependency>
+        <groupId>com.mchange</groupId>
+        <artifactId>c3p0</artifactId>
+        <version>0.9.5.4</version>
+    </dependency>
+
   </dependencies>
 
   <build>
