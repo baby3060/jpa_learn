@@ -29,12 +29,4 @@ public class Member {
     @NonNull
     // db 컬럼명과 동일하므로, 생략
     private String password;
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
 }
