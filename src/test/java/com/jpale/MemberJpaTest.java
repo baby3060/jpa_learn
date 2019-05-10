@@ -105,15 +105,58 @@ public class MemberJpaTest {
     }
 
     @Test
+    public void deleteTest() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        Member member1 = new Member("1", "테스트1", 1, "패스워드1");
+        Member member2 = new Member("2", "테스트2", 2, "패스워드2");
+        Member member3 = new Member("3", "테스트3", 3, "패스워드3");
+
+        try {
+            tx.begin();
+
+            em.persist(member1);
+            em.persist(member2);
+            em.persist(member3);
+
+            em.flush();
+
+            Member m1 = em.find(Member.class, "1");
+            Member m2 = em.find(Member.class, "2");
+            Member m3 = em.find(Member.class, "3");
+
+            assertMember(member1, m1);
+            assertMember(member2, m2);
+            assertMember(member3, m3);
+
+            TypedQuery<Long> query = em.createQuery("SELECT COUNT(m) FROM Member m Where m.id = :id", Long.class);
+
+            query.setParameter("id", "1");
+
+            long count = query.getSingleResult();
+
+            assertThat(count, is(1L));
+
+            em.remove(m1);
+
+            count = query.getSingleResult();
+
+            assertThat(count, is(0L));
+
+        } finally {
+            tx.rollback();
+            em.close();
+        }
+    }
+
+    @Test
     public void countTest() {
         EntityManager em = emf.createEntityManager();
 
-        String sql = "SELECT COUNT(m.userId) FROM Member m";
+        TypedQuery<Long> query = em.createQuery("SELECT COUNT(m) FROM Member m", Long.class);
+        long count = query.getSingleResult();
         
-        Query q = em.createQuery(sql);
-        
-        long count = (long)q.getSingleResult();
-
         assertThat(count, is(0L));
         
         em.close();
