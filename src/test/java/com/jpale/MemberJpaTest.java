@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 public class MemberJpaTest {
     private static EntityManagerFactory emf;
 
-    private Logger logger = LoggerFactory.getLogger(MemberJpaTest.class);
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @BeforeClass
     public static void setup() {
@@ -242,8 +242,5 @@ public class MemberJpaTest {
         assertThat(m1.getPassword(), is(m2.getPassword()));
     }
 
-    @AfterClass
-    public static void tearDown() {
-        emf.close();
-    }
+    
 }

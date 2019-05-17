@@ -22,7 +22,7 @@ public class ManagerFactoryMaker {
             } finally {
                 lock.unlock();
             }
-        }
+        } 
 
         return managerFactory;
     }
