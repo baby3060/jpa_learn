@@ -152,14 +152,22 @@ public class MemberJpaTest {
 
             assertThat(count, is(1L));
 
+            List<Board> boardList = em.createQuery("Select b From Board b Where b.member.userId = :userId").setParameter("userId", m1.getUserId()).getResultList();
+
+            if( boardList.size() > 0 ) {
+                for(Board board : boardList) {
+                    em.remove(board);
+                }
+            }
+
             em.remove(m1);
 
             count = query.getSingleResult();
 
             assertThat(count, is(0L));
 
+            tx.commit();
         } finally {
-            tx.rollback();
             em.close();
         }
     }

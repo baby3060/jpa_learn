@@ -24,9 +24,13 @@ public class Member {
     private String userName;
 
     @Column(name="age")
+    @NonNull
     private Integer userAge;
 
     @NonNull
     // db 컬럼명과 동일하므로, 생략
     private String password;
+
+    @OneToMany(mappedBy = "member")
+    private List<Board> boardList;
 }

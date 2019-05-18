@@ -38,7 +38,7 @@ public class Board {
     // Member 한 명 당 게시글 여러 개
     @ManyToOne
     private Member member;
-
+    
     @Column(name="write_date")
     private Date writeDate;
 
