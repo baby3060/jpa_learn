@@ -1,7 +1,7 @@
 package com.jpale.entity;
 
 import lombok.*;
-
+import java.util.List;
 import javax.persistence.*;
 
 @ToString

@@ -33,9 +33,11 @@ public class Board {
     @NonNull
     private long boardNo;
 
-    @Column(name="writer_id")
     @NonNull
-    private String writerId;
+    @JoinColumn(name = "writer_id", referencedColumnName = "id")
+    // Member 한 명 당 게시글 여러 개
+    @ManyToOne
+    private Member member;
 
     @Column(name="write_date")
     private Date writeDate;

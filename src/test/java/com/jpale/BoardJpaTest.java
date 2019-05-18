@@ -1,10 +1,9 @@
 package com.jpale;
 
-import javax.persistence.Query;
-
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
@@ -27,29 +26,36 @@ public class BoardJpaTest {
     @BeforeClass
     public static void setup() {
         emf = ManagerFactoryMaker.getFactoryInstance();
-
     }
 
     @Test
-    public void insertTest() {
-        Board board = new Board();
-        board.setWriterId("1");
-        board.setDescription("TEst");
-        board.setBoardType(BoardType.USER);
-
+    public void insertBoard() {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
 
         try {
-            tx.begin();
+            Member member = new Member("1", "테스트1", 1, "패스워드1");
+
+            String countSql = "Select Count(m) As cnt From Member m Where m.userId = :userId";
+
+            TypedQuery<Long> query = em.createQuery(countSql, Long.class).setParameter("userId", member.getUserId());
+
+            long count = query.getSingleResult();
+
+            if( count == 0L ) {
+                em.persist(member);
+            } else {
+                member = em.find(Member.class, member.getUserId());
+            }
+            
+            Board board = new Board();
+            board.setDescription("Test1");
+            board.setBoardType(BoardType.USER);
+            board.setMember(member);
 
             em.persist(board);
-
-            tx.commit();
-        } catch(Exception e) {
-            e.printStackTrace();
+        } finally {
             tx.rollback();
-        } finally {  
             em.close();
         }
     }

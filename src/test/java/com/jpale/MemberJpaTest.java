@@ -1,10 +1,9 @@
 package com.jpale;
 
-import javax.persistence.Query;
-
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
@@ -34,17 +33,32 @@ public class MemberJpaTest {
         deleteAll();
     }
 
+    @After
+    public void close() {
+        deleteAll();
+    }
+
     private void deleteAll() {
         EntityManager em = emf.createEntityManager();
 
-        String sql = "Delete FROM Member";
-        
-        Query query = em.createQuery(sql);
+        String sqlMember = "Delete FROM Member";
+        String sqlBoard = "Delete From Board";
+        String sqlAlter = "alter table Board auto_increment=1";
+
+        Query query = em.createQuery(sqlBoard);
 
         EntityTransaction tx = em.getTransaction();
 
         try {
             tx.begin();
+
+            query.executeUpdate();
+
+            query = em.createQuery(sqlMember);
+
+            query.executeUpdate();
+
+            query = em.createQuery(sqlAlter);
 
             query.executeUpdate();
 

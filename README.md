@@ -10,3 +10,6 @@ JPA 학습 테스트용
 >> JPQL 사용 시 asterisk(Select * From)과 같이 사용 못함(Select m From Member m 과 같이 사용해야 함)
 
 > MySQL 사용
+
+- [ ] Member 테이블과 Board 테이블 연관관계 걸어보기(1 대 다, 참조키 설정해야 함) : 단방향, 양방향 둘 다
+- [ ] 상속 매핑 걸어보기(Item, Book, Snack) extends

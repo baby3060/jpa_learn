@@ -13,5 +13,6 @@ create table board (
 	last_modified_date Date,
 	description varchar(1000),
 	board_type int(1),
-	primary key (board_no)
+	primary key (board_no),
+	FOREIGN KEY (writer_id) REFERENCES member(id)
 );
