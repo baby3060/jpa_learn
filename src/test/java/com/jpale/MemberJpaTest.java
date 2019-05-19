@@ -165,9 +165,8 @@ public class MemberJpaTest {
             count = query.getSingleResult();
 
             assertThat(count, is(0L));
-
-            tx.commit();
         } finally {
+            tx.rollback();
             em.close();
         }
     }

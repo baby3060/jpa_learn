@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+
 import java.util.Date;
 import com.jpale.entity.BoardTypeConverter;
 import com.jpale.common.BoardType;
@@ -39,6 +41,21 @@ public class Board {
     @ManyToOne
     private Member member;
     
+    // 양 쪽 관계 모두 유지하기 위해서 필요
+    // 작성자는 변하지 않으므로, 그대로 유지
+    public void setMember(Member member) {
+        this.member = member;
+
+        if( this.member != null ) {
+            
+            if( this.member.getBoardList() == null ) {
+                this.member.setBoardList(new ArrayList<Board>());
+            }
+        }
+        
+        member.getBoardList().add(this);
+    }
+
     @Column(name="write_date")
     private Date writeDate;
 
