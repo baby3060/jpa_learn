@@ -7,7 +7,7 @@ import javax.persistence.*;
 @ToString
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"userName", "userAge", "password"})
+@EqualsAndHashCode(exclude = {"userName", "userAge", "password", "street", "zipcode", "city"})
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -15,23 +15,35 @@ import javax.persistence.*;
 @Table(name="MEMBER")
 public class Member {
     @Id
-    @Column(name="ID")
+    @Column(name="ID", length = 20)
     @NonNull
     private String userId;
 
-    @Column(name="name")
+    @Column(name="name", length = 40, nullable = false)
     @NonNull
     private String userName;
 
-    @Column(name="age")
+    @Column(name="age", precision = 3, scale = 0, nullable = false)
     @NonNull
     private Integer userAge;
 
     @NonNull
+    @Column(length = 60, nullable = false)
     // db 컬럼명과 동일하므로, 생략
     private String password;
+
+    @Column(length = 60)
+    private String city;
+    @Column(length = 60)
+    private String street;
+    @Column(length = 60)
+    private String zipcode;
 
     // 참조키가 Board에 존재하므로 연관관계의 주인이 아니다. 따라서 mappedBy 속성을 사용함
     @OneToMany(mappedBy = "member")
     private List<Board> boardList;
+
+    // Order에서만 Member를 신경쓰므로, mappedBy 속성 사용
+    @OneToMany(mappedBy = "orderMember")
+    private List<Order> orderList;
 }

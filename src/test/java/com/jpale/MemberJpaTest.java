@@ -58,7 +58,7 @@ public class MemberJpaTest {
 
             query.executeUpdate();
 
-            query = em.createQuery(sqlAlter);
+            query = em.createNativeQuery(sqlAlter);
 
             query.executeUpdate();
 

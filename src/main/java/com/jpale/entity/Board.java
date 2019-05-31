@@ -17,26 +17,18 @@ import com.jpale.common.BoardType;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
-// ORACLE 확장 대비
-/*
-@SequenceGenerator(
-    name="BOARD_SEQUENCE_GENERATOR",
-    sequenceName = "BOARD_SEQ",
-    initialValue = 1,
-    allocationSize = 1
-)
-*/
 @Entity
 @Table(name="BOARD")
 public class Board {
+
     @Id
-    @Column(name="board_no")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NonNull
+    @Column(name="board_no", precision = 10, scale=0)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long boardNo;
 
     @NonNull
-    @JoinColumn(name = "writer_id", referencedColumnName = "id")
+    @JoinColumn(name = "writer_id", referencedColumnName = "id", nullable = false)
     // Member 한 명 당 게시글 여러 개
     @ManyToOne
     private Member member;
@@ -56,6 +48,7 @@ public class Board {
         member.getBoardList().add(this);
     }
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name="write_date")
     private Date writeDate;
 
@@ -66,6 +59,7 @@ public class Board {
         lastModifiedDate = new Date();
     }
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name="last_modified_date")
     private Date lastModifiedDate;
 
@@ -75,9 +69,10 @@ public class Board {
         lastModifiedDate = new Date();
     }
 
+    @Column(name="description", length=1000)
     private String description;
 
     @Convert(converter = BoardTypeConverter.class)
-    @Column(name="board_type")
+    @Column(name="board_type", precision=1, scale = 0, nullable = false)
     private BoardType boardType;
 }
