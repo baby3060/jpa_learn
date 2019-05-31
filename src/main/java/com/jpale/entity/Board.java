@@ -13,7 +13,7 @@ import com.jpale.common.BoardType;
 @ToString
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"writerId", "writeDate", "lastModifiedDate", "description", "boardType"})
+@EqualsAndHashCode(exclude = {"member", "writeDate", "lastModifiedDate", "description", "boardType"})
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor

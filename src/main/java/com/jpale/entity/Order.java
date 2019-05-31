@@ -11,9 +11,8 @@ import java.util.Date;
 @ToString
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"writerId", "writeDate", "lastModifiedDate", "description", "boardType"})
+@EqualsAndHashCode(exclude = {"orderDate", "status", "orderMember"})
 @NoArgsConstructor
-@RequiredArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name="ORDERS")
@@ -21,12 +20,12 @@ public class Order {
     @Id
     @GeneratedValue
     @Column(name = "order_id")
-    private long orderid;
+    private long orderId;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date orderDate;
 
-    @PreInsert
+    @PrePersist
     protected void orderDateInit() {
         orderDate = new Date();
     }
