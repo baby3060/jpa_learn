@@ -3,6 +3,7 @@ package com.jpale.entity;
 import java.util.Date;
 
 import lombok.*;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -38,4 +39,7 @@ public class Item {
     public void dateFill() {
         registDate = new Date();
     }
+
+    @OneToMany(mappedBy = "item")
+    private List<OrderItem> orderItems;
 }

@@ -3,7 +3,7 @@ package com.jpale.entity;
 import com.jpale.common.*;
 
 import lombok.*;
-
+import java.util.List;
 import javax.persistence.*;
 
 import java.util.Date;
@@ -34,7 +34,10 @@ public class Order {
     @Column(name = "order_status", nullable = false)
     private OrderStatus status;
     // member_id라는 컬럼 생성
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "member_id", nullable=false)
     private Member orderMember;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderItem> orderItemList;
 }
