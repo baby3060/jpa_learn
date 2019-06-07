@@ -14,8 +14,8 @@ import com.jpale.common.BoardType;
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {"member", "writeDate", "lastModifiedDate", "description", "boardType"})
-@NoArgsConstructor
 @RequiredArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name="BOARD")
@@ -24,7 +24,7 @@ public class Board {
     @Id
     @NonNull
     @Column(name="board_no", precision = 10, scale=0)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private long boardNo;
 
     @NonNull
@@ -36,15 +36,7 @@ public class Board {
     // 양 쪽 관계 모두 유지하기 위해서 필요
     // 작성자는 변하지 않으므로, 그대로 유지
     public void setMember(Member member) {
-        this.member = member;
-
-        if( this.member != null ) {
-            
-            if( this.member.getBoardList() == null ) {
-                this.member.setBoardList(new ArrayList<Board>());
-            }
-        }
-        
+        this.member = member;        
         member.getBoardList().add(this);
     }
 

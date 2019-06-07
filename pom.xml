@@ -157,6 +157,7 @@
           <configuration>
             <forkMode>once</forkMode>
             <useSystemClassloader>true</useSystemClassloader>
+            <workingDirectory>target</workingDirectory>
           </configuration>
       </plugin>
     </plugins>

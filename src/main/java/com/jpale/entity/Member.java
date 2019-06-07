@@ -2,12 +2,13 @@ package com.jpale.entity;
 
 import lombok.*;
 import java.util.List;
+import java.util.ArrayList;
 import javax.persistence.*;
 
 @ToString
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"userName", "userAge", "password", "street", "zipcode", "city"})
+@EqualsAndHashCode(exclude = {"userName", "userAge", "password", "street", "zipcode", "city", "team"})
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -46,4 +47,26 @@ public class Member {
     // Order에서만 Member를 신경쓰므로, mappedBy 속성 사용
     @OneToMany(mappedBy = "orderMember")
     private List<Order> orderList;
+
+    {
+        boardList = new ArrayList<Board>();
+        orderList = new ArrayList<Order>();
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    private Team team;
+
+    public void setTeam(Team team) {
+        // 초기화
+        if( this.team != null ) {
+            this.team.getMemberList().remove(this);
+        }
+        // 할당
+        this.team = team;
+        // List 할당
+        if( team != null ) {
+            team.getMemberList().add(this);
+        }
+    }
 }

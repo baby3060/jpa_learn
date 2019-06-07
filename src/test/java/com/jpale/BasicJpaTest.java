@@ -23,8 +23,4 @@ public class BasicJpaTest {
         em.close();
     }
 
-    @AfterClass
-    public static void tearDown() {
-        emf.close();
-    }
 }

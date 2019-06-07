@@ -22,7 +22,7 @@
             <property name="hibernate.id.new_generator_mappings" value="true" />
             
             <!-- DDL 자동 수행 -->
-            <property name="hibernate.hbm2ddl.auto" value="create" />
+            <property name="hibernate.hbm2ddl.auto" value="update" />
 
             <!-- db pool -->
             <property name="connection.provider_class" value="org.hibernate.connection.C3P0ConnectionProvider" />
