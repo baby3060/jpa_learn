@@ -4,6 +4,7 @@ import java.util.Date;
 
 import lombok.*;
 import java.util.List;
+import java.util.ArrayList;
 
 import javax.persistence.*;
 
@@ -40,6 +41,4 @@ public class Item {
         registDate = new Date();
     }
 
-    @OneToMany(mappedBy = "item")
-    private List<OrderItem> orderItems;
 }

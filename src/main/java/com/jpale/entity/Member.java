@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Table(name="MEMBER")
 public class Member {
     @Id
-    @Column(name="ID", length = 20)
+    @Column(name="id", length = 20)
     @NonNull
     private String userId;
 

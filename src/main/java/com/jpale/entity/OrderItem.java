@@ -8,14 +8,25 @@ import javax.persistence.*;
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {"orderCount", "orderPrice"})
-@NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 @Entity
 @Table(name="ORDERITEM")
 @IdClass(OrderItemKey.class)
 public class OrderItem {
     
+    public OrderItem() {}
+
+    public OrderItem(Order order, Item item) {
+        if( this.order != null ) {
+            this.order.getOrderItemList().remove(this);
+        }
+
+        this.order = order;
+        this.order.getOrderItemList().add(this);
+
+        this.item = item;
+    }
+
     @Id
     @NonNull
     @ManyToOne
@@ -24,10 +35,18 @@ public class OrderItem {
         referencedColumnName = "order_id"
     )
     private Order order;
+    public void setOrder(Order order) {
+        if( this.order != null ) {
+            this.order.getOrderItemList().remove(this);
+        }
+
+        this.order = order;
+        this.order.getOrderItemList().add(this);
+    }
 
     @Id
     @NonNull
-    @ManyToOne
+    @OneToOne
     @JoinColumn(
         name = "item_id",
         referencedColumnName = "item_id"
