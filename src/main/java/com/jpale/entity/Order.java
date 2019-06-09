@@ -16,7 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="ORDERS")
+@Table(name="Orders")
 public class Order {
     @Id
     @GeneratedValue
@@ -30,14 +30,14 @@ public class Order {
     protected void orderDateInit() {
         orderDate = new Date();
 
-        if( this.status == null ) {
-            this.status = OrderStatus.ORDERING;
+        if( this.orderStatus == null ) {
+            this.orderStatus = OrderStatus.ORDERING;
         }
     }
 
     @Convert(converter = OrderStatusConverter.class)
     @Column(name = "order_status", nullable = false)
-    private OrderStatus status;
+    private OrderStatus orderStatus;
 
     // member_id라는 컬럼 생성
     @ManyToOne
@@ -49,7 +49,7 @@ public class Order {
             this.orderMember.getOrderList().remove(this);
         }
 
-        this.orderMember = orderMember;
+        this.orderMember = member;
         this.orderMember.getOrderList().add(this);
     }
 

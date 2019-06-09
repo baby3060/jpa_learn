@@ -18,7 +18,10 @@ import java.util.*;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-public class OrderJpaTest {
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+
+public class OrderItemJpaTest {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private static EntityManagerFactory emf;
@@ -45,9 +48,11 @@ public class OrderJpaTest {
             String deleteAllItem = "Delete From Item";
             String deleteAllOrder = "Delete From Order";
             String deleteAllTeam = "Delete From Team";
+            String deleteAllOrderItem = "Delete From OrderItem";
             String alterOrder = "alter table orders auto_increment = 1";
-            String alterItem = "alter table Item auto_increment=1";
-            String alterBoard = "alter table Board auto_increment=1";
+            String alterItem = "alter table Item auto_increment = 1";
+            String alterBoard = "alter table Board auto_increment = 1";
+
 
             Query query = em.createQuery(deleteAllMember);
             query.executeUpdate();
@@ -58,6 +63,8 @@ public class OrderJpaTest {
             query = em.createQuery(deleteAllOrder);
             query.executeUpdate();
             query = em.createQuery(deleteAllBoard);
+            query.executeUpdate();
+            query = em.createQuery(deleteAllOrderItem);
             query.executeUpdate();
             query = em.createNativeQuery(alterOrder);
             query.executeUpdate();
@@ -75,47 +82,90 @@ public class OrderJpaTest {
         }
     }
 
-    @Test
-    public void insertOrder() {
-        EntityManager em = emf.createEntityManager();
 
+    @Test
+    public void insertOrderItem() {
+        
+        DateFormat format = new SimpleDateFormat("yyyyMMdd");
+
+        EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
+
+        Member member = new Member("1", "테스트1", 1, "패스워드1");
+        Team team = new Team("1111", "팀1");
+
+        Date today = new Date();
+
+        String todayStr = format.format(today);
+
+        logger.info(todayStr);
+
         try {
             tx.begin();
 
-            Member member = new Member("1", "테스트1", 1, "패스워드1");
+            member.setTeam(team);
 
-            Team team = new Team("1111", "팀1");
-
+            em.persist(team);
+            em.persist(member);
+            
             Item item = new Item();
             item.setItemName("아이템1");
             item.setPrice(5000);
             item.setStockQt(100);
-
+            
             em.persist(item);
-            em.persist(team);
-            member.setTeam(team);
-            em.persist(member);
+
+            assertThat(format.format(item.getRegistDate()), is(todayStr));
 
             Order order = new Order();
             order.setOrderMember(member);
+            
+            assertThat(order.getOrderItemList(), is(not(nullValue())));
 
             em.persist(order);
 
-            assertThat(order.getOrderId(), is(1L));
-            assertThat(member.getOrderList().size(), is(1));
+            OrderItem orderItem = new OrderItem(order, item);
+            orderItem.setOrderCount(1);
+            orderItem.setOrderPrice(10000);
 
-            member.setTeam(null);
+            em.persist(orderItem);
 
-            assertThat(member.getTeam(), is(nullValue()));
-            assertThat(team.getMemberList().size(), is(0));
+            Item item2 = new Item();
+            item2.setItemName("아이템2");
+            item2.setPrice(12000);
+            item2.setStockQt(200);
+            
+            em.persist(item2);
 
+            OrderItem orderItem2 = new OrderItem(order, item2);
+            orderItem2.setOrderCount(2);
+            orderItem2.setOrderPrice(20000);
+
+            em.persist(orderItem2);
+
+            List<Order> orderList = member.getOrderList();
+
+            orderList.stream()
+                         .forEach(orderIn -> {
+                             logger.info(orderIn.getOrderMember().getUserId() + ", " + format.format(orderIn.getOrderDate()) + " : " + orderIn.getOrderStatus().toString());
+                             List<OrderItem> orderItemList = orderIn.getOrderItemList();
+                             logger.info(orderItemList.size() + "");
+                         });
+            
+            orderItem2.setOrder(null);
+            orderItem2.setItem(null);
+
+            em.remove(orderItem2);
+            
+            List<OrderItem> orderItemList2 = order.getOrderItemList();
+            logger.info(orderItemList2.size() + "");
+            
         } catch(Exception e) {
+            
             logger.error(e.toString());
         } finally {
             tx.rollback();
             em.close();
         }
     }
-
 }

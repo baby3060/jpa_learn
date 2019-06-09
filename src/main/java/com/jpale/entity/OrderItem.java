@@ -11,7 +11,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Table(name="ORDERITEM")
-@IdClass(OrderItemKey.class)
+// @IdClass(OrderItemKey.class)
 public class OrderItem {
     
     public OrderItem() {}
@@ -22,13 +22,18 @@ public class OrderItem {
         }
 
         this.order = order;
-        this.order.getOrderItemList().add(this);
+
+        if( order != null ) {
+            this.order.getOrderItemList().add(this);
+        }
 
         this.item = item;
     }
 
     @Id
-    @NonNull
+    @GeneratedValue
+    private long order_item_id;
+    
     @ManyToOne
     @JoinColumn(
         name = "order_id",
@@ -41,11 +46,12 @@ public class OrderItem {
         }
 
         this.order = order;
-        this.order.getOrderItemList().add(this);
+
+        if( order != null ) {
+            this.order.getOrderItemList().add(this);
+        }
     }
 
-    @Id
-    @NonNull
     @OneToOne
     @JoinColumn(
         name = "item_id",

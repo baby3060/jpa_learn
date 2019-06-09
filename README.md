@@ -8,6 +8,7 @@ JPA 학습 테스트용
 >>> EntityManagerFactory를 하나만 생성하고, EntityManager를 계속 생성하면 된다(CRUD에 사용되는 객체).
 >>>> createQuery에 JPQL을 작성하여 사용할 경우 대소문자 엄격하게 구분함(entity의 클래스명과 동일해야 함)
 >> JPQL 사용 시 asterisk(Select * From)과 같이 사용 못함(Select m From Member m 과 같이 사용해야 함)
+>>>>> 키로 걸려 있을 경우 List 해제가 실시간으로 이뤄지지 않음.
 
 > MySQL 사용
 
