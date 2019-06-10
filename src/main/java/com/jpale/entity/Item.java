@@ -3,8 +3,7 @@ package com.jpale.entity;
 import java.util.Date;
 
 import lombok.*;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 import javax.persistence.*;
 
@@ -20,7 +19,7 @@ public class Item {
 
     @Id
     @Column(name = "item_id", precision = 12, scale=0)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private long itemId;
 
     @Column(name = "item_name", length = 100)
@@ -41,4 +40,7 @@ public class Item {
         registDate = new Date();
     }
 
+    @ManyToOne
+    @JoinColumn(name = "category")
+    private ItemCategory category;
 }

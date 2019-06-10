@@ -17,6 +17,7 @@ public class OrderItem {
     public OrderItem() {}
 
     public OrderItem(Order order, Item item) {
+        // Order 정리
         if( this.order != null ) {
             this.order.getOrderItemList().remove(this);
         }
@@ -27,7 +28,7 @@ public class OrderItem {
             this.order.getOrderItemList().add(this);
         }
 
-        this.item = item;
+        // Order 정리
     }
 
     @Id
@@ -58,6 +59,7 @@ public class OrderItem {
         referencedColumnName = "item_id"
     )
     private Item item;
+
 
     @Column(name = "order_count")
     private int orderCount;
