@@ -2,7 +2,7 @@ package com.jpale.common;
 
 public enum Category {
 
-    ALBUM("ALB");
+    ALBUM("ALB"), ETC("ETC");
 
     private String category;
 

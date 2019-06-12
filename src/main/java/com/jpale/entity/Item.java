@@ -43,4 +43,17 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "category")
     private ItemCategory category;
+
+    public void setCategory(ItemCategory category) {
+        if( this.category != null ) {
+            this.category.getItemList().remove(this);
+        }
+
+        this.category = category;
+
+        if( category != null ) {
+            this.category.getItemList().add(this);
+        }
+    }
+
 }

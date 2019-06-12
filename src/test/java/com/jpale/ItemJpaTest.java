@@ -125,7 +125,54 @@ public class ItemJpaTest {
             tx.rollback();
             em.close();
         }
+    }
 
+    @Test
+    public void itemCategorySet() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
 
+        try {
+            tx.begin();
+
+            ItemCategory iCategory = new ItemCategory();
+
+            iCategory.setCategory(Category.ETC);
+
+            em.persist(iCategory);
+
+            Item item = new Item();
+            item.setItemName("아이템1");
+            item.setPrice(5000);
+            item.setStockQt(100);
+            item.setCategory(iCategory);
+
+            em.persist(item);
+
+            item = new Item();
+            item.setItemName("아이템2");
+            item.setPrice(1000);
+            item.setStockQt(50);
+            item.setCategory(iCategory);
+
+            em.persist(item);
+
+            ItemCategory findCategory = em.find(ItemCategory.class, Category.ETC);
+
+            List<Item> etcItem = findCategory.getItemList();
+
+            assertThat(etcItem.size(), is(2));
+
+            etcItem.stream()
+                .forEach(item2 -> {
+                    logger.info(item2.getItemId() + "] " + item2.getItemName());
+                });
+
+        } catch(Exception e) {
+            logger.error(e.toString());
+        } finally {
+            tx.rollback();
+            em.close();
+        }
     }
 }
