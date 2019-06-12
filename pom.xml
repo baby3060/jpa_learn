@@ -158,7 +158,6 @@
             <forkMode>once</forkMode>
             <useSystemClassloader>true</useSystemClassloader>
             <workingDirectory>target</workingDirectory>
-            <test>com.jpale.OrderItemJpaTest</test>
           </configuration>
       </plugin>
     </plugins>

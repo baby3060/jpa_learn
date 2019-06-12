@@ -32,7 +32,7 @@ public class OrderItem {
     }
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long order_item_id;
     
     @ManyToOne

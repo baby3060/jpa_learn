@@ -24,7 +24,7 @@ public class Board {
     @Id
     @NonNull
     @Column(name="board_no", precision = 10, scale=0)
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long boardNo;
 
     @NonNull

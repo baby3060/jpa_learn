@@ -18,7 +18,8 @@ import java.util.*;
 @Table(name = "ICATEGORY")
 public class ItemCategory {
     @Id
-    @Column(length = 3)
+    @Column(length = 5)
+    @Enumerated(EnumType.STRING)
     @Convert(converter = CategoryConverter.class)
     private Category category;
 

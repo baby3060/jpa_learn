@@ -15,3 +15,5 @@ JPA 학습 테스트용
 - [X] DDL 사용
 - [X] Member 테이블과 Board 테이블 연관관계 걸어보기(1 대 다, 참조키 설정해야 함) : 단방향, 양방향 둘 다
 - [ ] 상속 매핑 걸어보기(Item, Book, Snack) extends
+
+>>>> @GeneratedValues에 특정 전략을 선택하지 않을 경우 Table 전략으로 생성됨

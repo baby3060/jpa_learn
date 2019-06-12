@@ -19,7 +19,7 @@ public class Item {
 
     @Id
     @Column(name = "item_id", precision = 12, scale=0)
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long itemId;
 
     @Column(name = "item_name", length = 100)

@@ -41,7 +41,7 @@ public class ItemJpaTest {
 
         String deleteAllMember = "Delete From Member";
         String deleteAllItem = "Delete From Item";
-        String alterItemOne = "alter table Item auto_increment=1";
+        String deleteAllCate = "Delete From ItemCategory";
 
         try {
             tx.begin();
@@ -54,9 +54,11 @@ public class ItemJpaTest {
 
             query.executeUpdate();
 
-            query = em.createNativeQuery(alterItemOne);
+            query = em.createQuery(deleteAllCate);
 
             query.executeUpdate();
+
+            em.createNativeQuery("ALTER TABLE ITEM AUTO_INCREMENT = 1").executeUpdate();
 
             tx.commit();
         } catch(Exception e) {
@@ -99,5 +101,31 @@ public class ItemJpaTest {
             tx.rollback();
             em.close();
         }
+    }
+
+    @Test
+    public void insertCategory() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+
+            ItemCategory iCategory = new ItemCategory();
+
+            iCategory.setCategory(Category.ALBUM);
+
+            em.persist(iCategory);
+
+            assertThat(iCategory.getCategory().getCategory(), is(Category.ALBUM.getCategory()));
+
+        } catch(Exception e) {
+            logger.error(e.toString());
+        } finally {
+            tx.rollback();
+            em.close();
+        }
+
+
     }
 }

@@ -12,15 +12,15 @@ import java.util.Date;
 @ToString
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"orderDate", "status", "orderMember"})
+@EqualsAndHashCode(exclude = {"orderDate", "orderStatus", "orderMember"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name="Orders")
 public class Order {
     @Id
-    @GeneratedValue
     @Column(name = "order_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long orderId;
 
     @Temporal(TemporalType.TIMESTAMP)
