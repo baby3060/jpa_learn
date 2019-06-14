@@ -45,7 +45,7 @@ public class OrderJpaTest {
             String deleteAllItem = "Delete From Item";
             String deleteAllOrder = "Delete From Order";
             String deleteAllTeam = "Delete From Team";
-            String alterOrder = "alter table orders auto_increment = 1";
+            String alterOrder = "alter table Orders auto_increment = 1";
             String alterItem = "alter table Item auto_increment=1";
             String alterBoard = "alter table Board auto_increment=1";
 
