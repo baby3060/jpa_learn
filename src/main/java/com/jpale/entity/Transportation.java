@@ -28,12 +28,14 @@ public abstract class Transportation {
     protected TransDriver driver;
 
     public void setDriver(TransDriver driver) {
+        // 초기화
         if( this.driver != null ) {
             this.driver.getTransList().remove(this);
         }
 
+        // 할당
         this.driver = driver;
-
+        // List 할당
         if( this.driver != null ) {
             this.driver.getTransList().add(this);
         }

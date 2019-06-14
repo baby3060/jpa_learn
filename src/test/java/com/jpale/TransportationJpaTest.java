@@ -67,13 +67,13 @@ public class TransportationJpaTest {
             
             TransDriver driver = new TransDriver();
 
-            Long count = em.createQuery("Select Count(d) From TransDriver d", Long.class).getSingleResult();
+            Long count = em.createQuery("Select Count(d) From TransDriver d Where d.driverId = :driverId", Long.class).setParameter("driverId", 1L).getSingleResult();
 
             if( count == 0L ) {
                 driver.setDriverName("Hello");
                 em.persist(driver);
             } else {
-                driver = em.createQuery("Select d From TransDriver d", TransDriver.class).getSingleResult();
+                driver = em.createQuery("Select d From TransDriver d Where d.driverId = :driverId", TransDriver.class).setParameter("driverId", 1L).getSingleResult();
             }
 
             em.persist(bus);
@@ -85,12 +85,48 @@ public class TransportationJpaTest {
             bus.setAreaCode(AreaCode.BUSAN);
             bus.setDriver(driver);
 
+            
+            logger.info("driver Size : " + driver.getTransList().size());
+
+            Bus bus2 = new Bus();
+            bus2.setAdultPrice(920);
+            bus2.setChildPrice(750);
+            bus2.setStudentPrice(1040);
+            bus2.setTimeAlloc(15);
+            bus2.setAreaCode(AreaCode.BUSAN);
+            bus2.setDriver(driver);
+
+            logger.info("driver Size : " + driver.getTransList().size());
+
+            em.persist(bus2);
+
             Taxi taxi = new Taxi();
             taxi.setCarNumber("120Bu1002");
             taxi.setBasePrice(2000);
             taxi.setDriver(driver);
 
+            logger.info("driver Size : " + driver.getTransList().size());
+
             em.persist(taxi);
+
+            count = em.createQuery("Select Count(d) From TransDriver d Where d.driverId = :driverId", Long.class).setParameter("driverId", 2L).getSingleResult();
+            
+            if( count == 0 ) {
+                TransDriver driver2 = new TransDriver();
+                driver2.setDriverName("Hello2");
+                em.persist(driver2);
+            }
+
+            TransDriver driver_find = em.find(TransDriver.class, 1L);
+
+            TransDriver driver_find2 = em.find(TransDriver.class, 2L);
+            logger.info(driver_find.getDriverId() + ", " + driver_find.getDriverName());
+            logger.info("driver_find.getTransList().size() => " + driver_find.getTransList().size());
+
+            
+            assertThat(driver_find.getTransList().size(), is(3));
+            assertThat(driver_find2.getTransList().size(), is(0));
+            
 
             tx.commit();
         } catch(Exception e) {

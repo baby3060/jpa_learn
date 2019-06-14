@@ -1,13 +1,14 @@
 package com.jpale;
 
-/**
- * Hello world!
- *
- */
+import javax.persistence.*;
+
+import com.jpale.common.ManagerFactoryMaker;
+import com.jpale.entity.TransDriver;
+
 public class App 
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+       
     }
 }

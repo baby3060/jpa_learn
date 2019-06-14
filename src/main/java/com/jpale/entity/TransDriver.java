@@ -10,6 +10,7 @@ import java.util.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"transList"})
 @Entity
 public class TransDriver {
     @Id
