@@ -17,3 +17,4 @@ JPA 학습 테스트용
 - [ ] 상속 매핑 걸어보기(Item, Book, Snack) extends
 
 >>>> @GeneratedValues에 특정 전략을 선택하지 않을 경우 Table 전략으로 생성됨
+>>>> InheritanceType.TABLE_PER_CLASS으로 설정하였을 경우 GeneratedValue로 자동 키 생성 시 전략을 IDENTIFY로 설정했더니 에러가 발생하였다.

@@ -45,6 +45,9 @@ public class ItemsJpaTest {
             String sql = "Delete From Items";
 
             em.createQuery(sql).executeUpdate();
+            em.createQuery("Delete From BookPer").executeUpdate();
+            em.createQuery("Delete From MoviePer").executeUpdate();
+            em.createQuery("Delete From AlbumPer").executeUpdate();
 
             em.createNativeQuery("Alter table Items auto_increment = 1 ").executeUpdate();
 
@@ -98,6 +101,55 @@ public class ItemsJpaTest {
                     .forEach(items -> {
                         logger.info(items.getDiscriminatorValue());
                     });
+
+        } catch(Exception e) {
+            logger.error(e.toString());
+        } finally {
+            tx.rollback();
+            em.close();
+        }
+    }
+
+    @Test
+    public void perTest() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+
+            AlbumPer album = new AlbumPer();
+            album.setName("앨범1");
+            album.setPrice(3000);
+            album.setArtist("아티스트1");
+
+            em.persist(album);
+
+            BookPer book = new BookPer();
+            book.setName("책1");
+            book.setPrice(1000);
+            book.setIsbn("1--2030401");
+
+            em.persist(book);
+
+            MoviePer movie = new MoviePer();
+            movie.setName("영화1");
+            movie.setPrice(6000);
+            movie.setActor("이길동");
+
+            em.persist(movie);
+
+            List<ItemsPer> totalList = new ArrayList<ItemsPer>();
+
+            List<BookPer> itemList = em.createQuery("Select i From BookPer i Order By i.id", BookPer.class).getResultList();
+            List<MoviePer> itemList2 = em.createQuery("Select i From MoviePer i Order By i.id", MoviePer.class).getResultList();
+            List<AlbumPer> itemList3 = em.createQuery("Select i From AlbumPer i Order By i.id", AlbumPer.class).getResultList();
+            
+            totalList.addAll(itemList);
+            totalList.addAll(itemList2);
+            totalList.addAll(itemList3);
+
+            assertThat(totalList.size(), is(3));
 
         } catch(Exception e) {
             logger.error(e.toString());
