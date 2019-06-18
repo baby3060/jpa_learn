@@ -20,7 +20,7 @@ import java.util.*;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-public class ItemsJpaTest {
+public class ExtendsJpaTest {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static EntityManagerFactory emf;
@@ -48,8 +48,14 @@ public class ItemsJpaTest {
             em.createQuery("Delete From BookPer").executeUpdate();
             em.createQuery("Delete From MoviePer").executeUpdate();
             em.createQuery("Delete From AlbumPer").executeUpdate();
+            em.createQuery("Delete From Buyer").executeUpdate();
+            em.createQuery("Delete From Seller").executeUpdate();
 
+
+            em.createNativeQuery("Update items_sequence Set next_val = 0 Where sequence_name = 'ITEMS_SEQ' ").executeUpdate();
             em.createNativeQuery("Alter table Items auto_increment = 1 ").executeUpdate();
+            em.createNativeQuery("Alter table Buyer auto_increment = 1 ").executeUpdate();
+            em.createNativeQuery("Alter table Seller auto_increment = 1 ").executeUpdate();
 
             tx.commit();
         } catch(Exception e) {
@@ -151,6 +157,11 @@ public class ItemsJpaTest {
 
             assertThat(totalList.size(), is(3));
 
+            totalList.stream()
+                    .forEach(itemPer -> {
+                        logger.info("ItemPer Name : " + itemPer.getName());
+                    });
+
         } catch(Exception e) {
             logger.error(e.toString());
         } finally {
@@ -158,4 +169,27 @@ public class ItemsJpaTest {
             em.close();
         }
     }
+
+    @Test
+    public void mappedClassTest() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+
+            Buyer buyer1 = new Buyer();
+            buyer1.setName("Buyer1");
+            buyer1.setEmail("1@dfi.com");
+
+            em.persist(buyer1);
+            
+        } catch(Exception e) {
+            logger.error(e.toString());
+        } finally {
+            tx.rollback();
+            em.close();
+        }
+    }
+
 }

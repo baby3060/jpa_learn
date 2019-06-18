@@ -158,7 +158,8 @@
             <forkMode>once</forkMode>
             <useSystemClassloader>true</useSystemClassloader>
             <workingDirectory>target</workingDirectory>
-            <test>com.jpale.ItemsJpaTest</test>
+            <argLine>-Dfile.encoding=UTF-8</argLine>
+            <test>com.jpale.ExtendsJpaTest</test>
           </configuration>
       </plugin>
     </plugins>

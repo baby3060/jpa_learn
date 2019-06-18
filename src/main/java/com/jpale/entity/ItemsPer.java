@@ -25,8 +25,4 @@ public abstract class ItemsPer implements Serializable {
 
     @Column(name = "item_price", precision = 10, scale = 0)
     protected int price;
-
-    @Column(name = "item_type", insertable = false, updatable = false)
-    protected String itemType;
-
 }
