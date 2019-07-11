@@ -21,7 +21,9 @@ JPA 학습 테스트용
 >>>> @Entity는 @Entity(@Inheritance를 통한 전략과 @DiscriminatorColumn 사용. @PrimaryKeyJoinColumn으로 ID 재정의)이거나 @MappedSuperclass 클래스만 상속 가능
 
 > 복합키(JPA에서의 복합키는 @IdClass, @EmbeddedId로 지정)
+>> 복합키 클래스에는 항상 equals와 hashCode 구현하기
 >> 식별 관계 : 부모 테이블의 기본키를 자식 테이블의 기본키로 사용
 >> 비식별 관계 : 부모 테이블의 기본 키를 자식 테이블의 외래키로만 사용. 자식 테이블 삽입 시 Join이 걸려있는 부모 테이블의 객체가 DB에 저장되어 있지 않으면, RuntimeException 발생
 >>> 필수적 비식별 : 외래키에 Null 허용 안 함
 >>> 선택적 비식별 : 외래키에 Null 허용
+>>>> 장단점 : @IdClass는 @EmbeddedClass 보다 객체 지향적이지는 않지만, JPQL이 보다 간단함. @EmbeddedClass의 경우 @IdClass 보다 객체지향적이긴 하지만, JPQL이 더 복잡해질 가능성이 큼

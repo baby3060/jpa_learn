@@ -42,6 +42,7 @@ public class IdentifyTest1 {
 
             em.createNativeQuery("Delete From CHILDIDC").executeUpdate();
             em.createNativeQuery("Delete From PARENTIDC").executeUpdate();
+            em.createNativeQuery("Delete From PARENTEMBED").executeUpdate();
 
             tx.commit();
         } catch(Exception e) {
@@ -147,4 +148,36 @@ public class IdentifyTest1 {
             em.close();
         }
     }
+
+    @Test
+    public void insertEmbed() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+
+            ParentEmbedEntity parent = new ParentEmbedEntity();
+            ParentIdEmbed parentId = new ParentIdEmbed("1", "1");
+            parent.setId(parentId);
+            parent.setName("Name");
+
+            em.persist(parent);
+
+            Long count = em.createQuery("Select Count(p) From ParentEmbedEntity p Where p.id.id1 = :id1 And p.id.id2 = :id2", Long.class)
+                           .setParameter("id1", parentId.getId1())
+                           .setParameter("id2", parentId.getId2())
+                           .getSingleResult();
+            
+            assertThat(count, is(1L));
+
+
+        } catch(Exception e) {
+            logger.error(e.toString());
+        } finally {
+            tx.rollback();
+            em.close();
+        }
+    }
+
 }
