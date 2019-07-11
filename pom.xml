@@ -159,7 +159,7 @@
             <useSystemClassloader>true</useSystemClassloader>
             <workingDirectory>target</workingDirectory>
             <argLine>-Dfile.encoding=UTF-8</argLine>
-            <test>com.jpale.IdentifyTest2</test>
+            <test>com.jpale.OneOnOneIdenTest</test>
           </configuration>
       </plugin>
     </plugins>
