@@ -45,6 +45,10 @@
     
     <logger name="org.hibernate.integrator.internal.IntegratorServiceImpl" level="OFF" />
     
+    <logger name="org.hibernate.type" additivity="false" >
+        <level value="TRACE" />
+        <appender-ref ref="PRINT_CONSOLE" />
+    </logger>
 
     <root level="debug">
         <appender-ref ref="PRINT_CONSOLE" />

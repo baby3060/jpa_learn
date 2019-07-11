@@ -14,7 +14,14 @@ JPA 학습 테스트용
 
 - [X] DDL 사용
 - [X] Member 테이블과 Board 테이블 연관관계 걸어보기(1 대 다, 참조키 설정해야 함) : 단방향, 양방향 둘 다
-- [ ] 상속 매핑 걸어보기(Item, Book, Snack) extends
+- [X] 상속 매핑 걸어보기(Item, Book, Snack) extends
 
 >>>> @GeneratedValues에 특정 전략을 선택하지 않을 경우 Table 전략으로 생성됨
 >>>> InheritanceType.TABLE_PER_CLASS으로 설정하였을 경우 GeneratedValue로 자동 키 생성 시 전략을 IDENTIFY로 설정했더니 에러가 발생하였다.
+>>>> @Entity는 @Entity(@Inheritance를 통한 전략과 @DiscriminatorColumn 사용. @PrimaryKeyJoinColumn으로 ID 재정의)이거나 @MappedSuperclass 클래스만 상속 가능
+
+> 복합키(JPA에서의 복합키는 @IdClass, @EmbeddedId로 지정)
+>> 식별 관계 : 부모 테이블의 기본키를 자식 테이블의 기본키로 사용
+>> 비식별 관계 : 부모 테이블의 기본 키를 자식 테이블의 외래키로만 사용. 자식 테이블 삽입 시 Join이 걸려있는 부모 테이블의 객체가 DB에 저장되어 있지 않으면, RuntimeException 발생
+>>> 필수적 비식별 : 외래키에 Null 허용 안 함
+>>> 선택적 비식별 : 외래키에 Null 허용
