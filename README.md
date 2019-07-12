@@ -27,3 +27,19 @@ JPA 학습 테스트용
 >>> 필수적 비식별 : 외래키에 Null 허용 안 함
 >>> 선택적 비식별 : 외래키에 Null 허용
 >>>> 장단점 : @IdClass는 @EmbeddedClass 보다 객체 지향적이지는 않지만, JPQL이 보다 간단함. @EmbeddedClass의 경우 @IdClass 보다 객체지향적이긴 하지만, JPQL이 더 복잡해질 가능성이 큼
+
+
+> 로딩 전략 : 즉시 로딩, 지연 로딩(조회해 옴과 동시에 Join 걸어 있는 데이터를 불러올 것인지? 아니면, 필요할 때 불러올 것인지?)
+>> 지연 로딩으로 가져올 시 team.getMemberList()와 같이 불러온다고 하더라도, 쿼리문을 날리는 것이 아니라 team.getMemberList().get(0)과 같이 실제로 사용할 때 쿼리를 날려서 데이터를 가져온다.
+>> @ManyToOne, @OneToOne의 경우 즉시 로딩이 기본값이고, @OneToMany, @ManyToMany의 기본이 지연 로딩.
+>>> 하나의 엔티티에서 둘 이상의 컬렉션을 즉시 로딩하는 것은 좋지 않음.
+>>> 컬렉션의 즉시 로딩은 항상 Outer 조인을 사용한다(optional의 값에 따라 Inner 조인 또한 사용. @OneToMany와 @ManyToMany는 무조건 Outer Join).
+
+> 영속성 전이 : 연관된 엔티티도 함께 영속 상태로 만들고자 할 때 사용(부모 엔티티를 저장할 때 자식 엔티티도 함께 저장)
+>> CascadeType.PERSIST : persist 호출하여 부모 엔티티 저장 시 자식 엔티티도 함께 저장
+>> CascadeType.REMOVE : remove 호출하여 부모 엔티티 삭제 시 자식 엔티티도 함께 삭제
+>>> 두 CascadeType 모두 flush 시 전이 발생
+
+> 부모 엔티티와 연관관계가 끊어진 자식 엔티티를 자동으로 삭제하는 기능 : 고아 객체(ORPHAN) 제거, orphanRemoval = true
+>> 부모 엔티티의 컬렉션에서 자식 엔티티의 참조만 제거하면 자식 엔티티가 자동으로 삭제
+>>> CascadeType.ALL과 orphanRemoval = true를 모두 설정하면 부모 엔티티를 통해서 자식의 생명주기를 관리할 수 있다(자식 저장 및 자식 삭제 모두).

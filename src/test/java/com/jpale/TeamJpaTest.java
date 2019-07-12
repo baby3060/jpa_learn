@@ -110,9 +110,6 @@ public class TeamJpaTest {
             Team team = new Team("1111", "팀1");
             Team team2 = new Team("2222", "팀2");
 
-            em.persist(team);
-            em.persist(team2);
-
             Member member1 = em.find(Member.class, "1");
             Member member2 = em.find(Member.class, "2");
             Member member3 = em.find(Member.class, "3");
@@ -123,6 +120,9 @@ public class TeamJpaTest {
             member2.setTeam(team2);
             member3.setTeam(team);
             member4.setTeam(team);
+
+            em.persist(team);
+            em.persist(team2);
 
             assertThat(team.getMemberList().size(), is(3));
             assertThat(team2.getMemberList().size(), is(1));

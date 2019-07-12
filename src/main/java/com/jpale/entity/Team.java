@@ -41,6 +41,6 @@ public class Team {
         createDate = new Date();
     }
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Member> memberList;
 }

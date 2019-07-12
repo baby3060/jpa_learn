@@ -53,7 +53,7 @@ public class Member {
         orderList = new ArrayList<Order>();
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
     private Team team;
 
