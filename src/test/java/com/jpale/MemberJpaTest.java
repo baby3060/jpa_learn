@@ -1,5 +1,7 @@
 package com.jpale;
 
+import java.math.BigInteger;
+
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -43,6 +45,7 @@ public class MemberJpaTest {
 
         String sqlMember = "Delete FROM Member";
         String sqlBoard = "Delete From Board";
+        String sqlIncrest = "Delete From interest_subject";
         String sqlAlter = "alter table Board auto_increment=1";
 
         Query query = em.createQuery(sqlBoard);
@@ -51,6 +54,10 @@ public class MemberJpaTest {
 
         try {
             tx.begin();
+
+            query.executeUpdate();
+
+            query = em.createNativeQuery(sqlIncrest);
 
             query.executeUpdate();
 
@@ -127,8 +134,12 @@ public class MemberJpaTest {
         Member member2 = new Member("2", "테스트2", 2, "패스워드2");
         Member member3 = new Member("3", "테스트3", 3, "패스워드3");
 
+        Address address = new Address("시", "길", "우편번호");
+
         try {
             tx.begin();
+
+            member1.setAddress(address);
 
             em.persist(member1);
             em.persist(member2);
@@ -263,5 +274,46 @@ public class MemberJpaTest {
         assertThat(m1.getPassword(), is(m2.getPassword()));
     }
 
+    @Test
+    public void collectionTest() {
+        EntityManager em = emf.createEntityManager();
+
+        EntityTransaction tx = em.getTransaction();
+
+        Member member = new Member("1", "테스트1", 1, "패스워드1");
+
+        try {
+            tx.begin();
+
+            member.getInterestSubject().add("Shopping");
+            member.getInterestSubject().add("Webtoon");
+
+            em.persist(member);
+
+            Query query = em.createNativeQuery("Select Count(*) As cnt From interest_subject Where member_id = :member_id").setParameter("member_id", "1");
+
+            Long count = ((BigInteger)query.getSingleResult()).longValue();
+            assertThat(count, is(2L));
+            
+            assertThat(member.getInterestSubject().size(), is(2));
+
+            member.getInterestSubject().remove("Webtoon");
+
+            assertThat(member.getInterestSubject().size(), is(1));
+            count = ((BigInteger)query.getSingleResult()).longValue();
+            assertThat(count, is(1L));
+
+            member.getInterestSubject().add("Catoon");
+
+            count = ((BigInteger)query.getSingleResult()).longValue();
+            assertThat(count, is(2L));
+
+        } catch(Exception e) {
+            logger.error("Err Msg : " + e.toString());
+        } finally {
+            tx.rollback();
+            em.close();
+        }
+    }
     
 }

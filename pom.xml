@@ -159,7 +159,7 @@
             <useSystemClassloader>true</useSystemClassloader>
             <workingDirectory>target</workingDirectory>
             <argLine>-Dfile.encoding=UTF-8</argLine>
-            <test>com.jpale.TeamJpaTest</test>
+            <test>com.jpale.MemberJpaTest</test>
           </configuration>
       </plugin>
     </plugins>

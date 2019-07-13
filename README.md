@@ -43,3 +43,9 @@ JPA 학습 테스트용
 > 부모 엔티티와 연관관계가 끊어진 자식 엔티티를 자동으로 삭제하는 기능 : 고아 객체(ORPHAN) 제거, orphanRemoval = true
 >> 부모 엔티티의 컬렉션에서 자식 엔티티의 참조만 제거하면 자식 엔티티가 자동으로 삭제
 >>> CascadeType.ALL과 orphanRemoval = true를 모두 설정하면 부모 엔티티를 통해서 자식의 생명주기를 관리할 수 있다(자식 저장 및 자식 삭제 모두).
+
+> 값 타입 : 테이블을 만들지 않고, 객체로 해당 속성을 이루고자 할 때는 @Embedded와 @Embeddable 애노테이션을 사용.
+>> 해당 타입을 두 개 이상 사용할 경우 @AttributeOverride를 사용해서 재설정할 컬럼명을 지정해주면 된다.
+>>> 값 타입(객체형)을 복사 시 참조값을 넘기므로, 값 객체는 불변 객체로 만드는 것이 좋다(Setter가 없는).
+>> Join으로 묶지 않고, 각 엔티티별로 연관관계가 존재할 때에는 @ElementCollection과 @CollectionTable 애노테이션을 사용할 수 있음.
+>>> @ElementCollection로 관리할 때는 무조건 해당 하는 키의 컬렉션을 한 번 정리 후에 다시 Insert한다.

@@ -3,12 +3,14 @@ package com.jpale.entity;
 import lombok.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 import javax.persistence.*;
 
 @ToString
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"userName", "userAge", "password", "street", "zipcode", "city", "team"})
+@EqualsAndHashCode(exclude = {"userName", "userAge", "password", "address", "orderList", "boardList", "team", "interestSubject"})
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -33,25 +35,21 @@ public class Member {
     // db 컬럼명과 동일하므로, 생략
     private String password;
 
-    @Column(length = 60)
-    private String city;
-    @Column(length = 60)
-    private String street;
-    @Column(length = 60)
-    private String zipcode;
-
+    @Embedded 
+    private Address address;
+    
     // 참조키가 Board에 존재하므로 연관관계의 주인이 아니다. 따라서 mappedBy 속성을 사용함
-    @OneToMany(mappedBy = "member")
-    private List<Board> boardList;
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
+    private List<Board> boardList = new ArrayList<Board>();
 
     // Order에서만 Member를 신경쓰므로, mappedBy 속성 사용
-    @OneToMany(mappedBy = "orderMember")
-    private List<Order> orderList;
+    @OneToMany(mappedBy = "orderMember", cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
+    private List<Order> orderList = new ArrayList<Order>(); 
 
-    {
-        boardList = new ArrayList<Board>();
-        orderList = new ArrayList<Order>();
-    }
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "interest_subject", joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "subject_catal", length = 50)
+    private Set<String> interestSubject = new HashSet<String>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
