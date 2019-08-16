@@ -28,6 +28,8 @@ public class OrderItem {
             this.order.getOrderItemList().add(this);
         }
 
+        this.item = item;
+
         // Order 정리
     }
 
@@ -35,6 +37,7 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long order_item_id;
     
+
     @ManyToOne
     @JoinColumn(
         name = "order_id",

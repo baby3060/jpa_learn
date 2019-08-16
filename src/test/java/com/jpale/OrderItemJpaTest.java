@@ -52,25 +52,37 @@ public class OrderItemJpaTest {
             String alterOrder = "alter table orders auto_increment = 1";
             String alterItem = "alter table Item auto_increment = 1";
             String alterBoard = "alter table Board auto_increment = 1";
+            String alterOrderItem = "alter table OrderItem auto_increment = 1";
 
 
-            Query query = em.createQuery(deleteAllMember);
+            Query query = em.createQuery(deleteAllOrderItem);
             query.executeUpdate();
-            query = em.createQuery(deleteAllItem);
-            query.executeUpdate();
-            query = em.createQuery(deleteAllTeam);
-            query.executeUpdate();
+
             query = em.createQuery(deleteAllOrder);
             query.executeUpdate();
+
+            query = em.createQuery(deleteAllItem);
+            query.executeUpdate();
+
             query = em.createQuery(deleteAllBoard);
             query.executeUpdate();
-            query = em.createQuery(deleteAllOrderItem);
+
+            query = em.createQuery(deleteAllMember);
             query.executeUpdate();
+
+            query = em.createQuery(deleteAllTeam);
+            query.executeUpdate();
+
             query = em.createNativeQuery(alterOrder);
             query.executeUpdate();
+
             query = em.createNativeQuery(alterItem);
             query.executeUpdate();
+
             query = em.createNativeQuery(alterBoard);
+            query.executeUpdate();
+
+            query = em.createNativeQuery(alterOrderItem);
             query.executeUpdate();
 
             tx.commit();
@@ -83,7 +95,7 @@ public class OrderItemJpaTest {
     }
 
 
-    @Test
+    // @Test
     public void insertOrderItem() {
         
         DateFormat format = new SimpleDateFormat("yyyyMMdd");
@@ -168,4 +180,73 @@ public class OrderItemJpaTest {
             em.close();
         }
     }
+
+    @Test
+    public void projectionTest() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        Member member = new Member("1", "테스트1", 1, "패스워드1");
+        Team team = new Team("1111", "팀1");
+
+        try {
+            tx.begin();
+
+            em.persist(team);
+
+            member.setTeam(team);
+
+            em.persist(member);
+            
+            Item item = new Item();
+            item.setItemName("아이템1");
+            item.setPrice(5000);
+            item.setStockQt(100);
+            
+            em.persist(item);
+
+            Order order = new Order();
+            order.setOrderMember(member);
+            
+            em.persist(order);
+
+            OrderItem orderItem = new OrderItem(order, item);
+            orderItem.setOrderCount(1);
+            orderItem.setOrderPrice(10000);
+
+            em.persist(orderItem);
+
+            Item item2 = new Item();
+            item2.setItemName("아이템2");
+            item2.setPrice(12000);
+            item2.setStockQt(200);
+            
+            em.persist(item2);
+
+            OrderItem orderItem2 = new OrderItem(order, item2);
+            orderItem2.setOrderCount(2);
+            orderItem2.setOrderPrice(20000);
+
+            em.persist(orderItem2);
+
+            List<Object[]> proList = em.createQuery("Select o.order, o.item From OrderItem o ").getResultList();
+
+            assertThat(proList.size(), is(2));
+
+            for(Object[] row: proList) {
+                Order orderRead = (Order)row[0];
+                Item itemRead = (Item)row[1];
+
+                logger.info("Order : " + orderRead.getOrderId() + ", " + orderRead.getOrderStatus().toString() + ", Item : " + itemRead.getPrice() + ", " + itemRead.getItemName());
+            }
+            
+        } catch(Exception e) {
+            
+            logger.error(e.toString());
+        } finally {
+            tx.rollback();
+            em.close();
+        }
+    }
+
 }

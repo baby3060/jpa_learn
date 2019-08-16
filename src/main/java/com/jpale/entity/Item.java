@@ -56,4 +56,11 @@ public class Item {
         }
     }
 
+    @OneToMany(mappedBy = "item")
+    private List<OrderItem> orderItemList;
+
+    {
+        orderItemList = new ArrayList<OrderItem>();
+    }
+
 }
