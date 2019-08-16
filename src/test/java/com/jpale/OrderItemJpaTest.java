@@ -95,7 +95,7 @@ public class OrderItemJpaTest {
     }
 
 
-    // @Test
+    @Test
     public void insertOrderItem() {
         
         DateFormat format = new SimpleDateFormat("yyyyMMdd");

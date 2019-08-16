@@ -43,30 +43,50 @@ public class MemberJpaTest {
     private void deleteAll() {
         EntityManager em = emf.createEntityManager();
 
-        String sqlMember = "Delete FROM Member";
-        String sqlBoard = "Delete From Board";
-        String sqlIncrest = "Delete From interest_subject";
-        String sqlAlter = "alter table Board auto_increment=1";
-
-        Query query = em.createQuery(sqlBoard);
-
         EntityTransaction tx = em.getTransaction();
 
         try {
             tx.begin();
 
+            String deleteAllMember = "Delete From Member";
+            String deleteAllBoard = "Delete From Board";
+            String deleteAllItem = "Delete From Item";
+            String deleteAllOrder = "Delete From Order";
+            String deleteAllTeam = "Delete From Team";
+            String deleteAllOrderItem = "Delete From OrderItem";
+            String alterOrder = "alter table orders auto_increment = 1";
+            String alterItem = "alter table Item auto_increment = 1";
+            String alterBoard = "alter table Board auto_increment = 1";
+            String alterOrderItem = "alter table OrderItem auto_increment = 1";
+
+            Query query = em.createQuery(deleteAllOrderItem);
             query.executeUpdate();
 
-            query = em.createNativeQuery(sqlIncrest);
-
+            query = em.createQuery(deleteAllOrder);
             query.executeUpdate();
 
-            query = em.createQuery(sqlMember);
-
+            query = em.createQuery(deleteAllItem);
             query.executeUpdate();
 
-            query = em.createNativeQuery(sqlAlter);
+            query = em.createQuery(deleteAllBoard);
+            query.executeUpdate();
 
+            query = em.createQuery(deleteAllMember);
+            query.executeUpdate();
+
+            query = em.createQuery(deleteAllTeam);
+            query.executeUpdate();
+
+            query = em.createNativeQuery(alterOrder);
+            query.executeUpdate();
+
+            query = em.createNativeQuery(alterItem);
+            query.executeUpdate();
+
+            query = em.createNativeQuery(alterBoard);
+            query.executeUpdate();
+
+            query = em.createNativeQuery(alterOrderItem);
             query.executeUpdate();
 
             tx.commit();
@@ -281,7 +301,7 @@ public class MemberJpaTest {
         EntityTransaction tx = em.getTransaction();
 
         Member member = new Member("1", "테스트1", 1, "패스워드1");
-
+        
         try {
             tx.begin();
 
@@ -315,5 +335,52 @@ public class MemberJpaTest {
             em.close();
         }
     }
+    
+    @Test
+    public void pagingTest() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+
+            for( int i = 1; i < 14; i++ ) {
+                Member member = new Member(String.valueOf(i), "테스트" + i, i, "패스워드" + i);
+                em.persist(member);
+            }
+
+            TypedQuery<Long> query = em.createQuery("Select Count(m) From Member m", Long.class);
+            long count = query.getSingleResult();
+
+            assertThat(count, is(13L));
+
+            // userId가 문자열이므로, 일반적으로 Order By 할 시 원하는 결과가 안 나옴
+            TypedQuery<Member> listQuery = em.createQuery("Select m From Member m Order By m.userId * 1", Member.class);
+            listQuery.setFirstResult(0);
+            listQuery.setMaxResults(10);
+
+            List<Member> resultList = listQuery.getResultList();
+
+            assertThat(resultList.size(), is(10));
+            
+            for( int i = 0; i < resultList.size(); i++ ) {
+                assertThat(resultList.get(i).getUserId(), is(String.valueOf((i + 1))));
+            }
+            
+            listQuery.setFirstResult(10);
+            resultList = listQuery.getResultList();
+            assertThat(resultList.size(), is(3));
+            for( int i = 0; i < resultList.size(); i++ ) {
+                assertThat(resultList.get(i).getUserId(), is(String.valueOf((10 + i + 1))));
+            }
+
+        } catch(Exception e) {
+            logger.error("Err Msg : " + e.toString());
+        } finally {
+            tx.rollback();
+            em.close();
+        } 
+    }
+
     
 }
