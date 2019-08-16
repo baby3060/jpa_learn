@@ -97,7 +97,7 @@ public class MemberJpaTest {
         }
     }
 
-    @Test
+    // @Test
     public void updateTest() {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -145,7 +145,7 @@ public class MemberJpaTest {
         }
     }
 
-    @Test
+    // @Test
     public void deleteTest() {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -202,7 +202,7 @@ public class MemberJpaTest {
         }
     }
 
-    @Test
+    // @Test
     public void countTest() {
         EntityManager em = emf.createEntityManager();
 
@@ -214,7 +214,7 @@ public class MemberJpaTest {
         em.close();
     }
 
-    @Test
+    // @Test
     public void insertTest() {
 
         EntityManager em = emf.createEntityManager();
@@ -247,7 +247,7 @@ public class MemberJpaTest {
         }
     }
 
-    @Test
+    // @Test
     public void listTest() {
         EntityManager em = emf.createEntityManager();
 
@@ -294,7 +294,7 @@ public class MemberJpaTest {
         assertThat(m1.getPassword(), is(m2.getPassword()));
     }
 
-    @Test
+    // @Test
     public void collectionTest() {
         EntityManager em = emf.createEntityManager();
 
@@ -336,7 +336,7 @@ public class MemberJpaTest {
         }
     }
     
-    @Test
+    // @Test
     public void pagingTest() {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -382,5 +382,97 @@ public class MemberJpaTest {
         } 
     }
 
-    
+    @Test
+    public void groupingTest() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        
+        try {
+
+            tx.begin();
+
+            Team teamA = new Team("A", "Team A");
+            Team teamB = new Team("B", "Team B");
+
+            em.persist(teamA);
+            em.persist(teamB);
+
+            Member member1 = new Member("1", "테스트1", 1, "패스워드1");
+            Member member2 = new Member("2", "테스트2", 2, "패스워드2");
+            Member member3 = new Member("3", "테스트3", 3, "패스워드3");
+            Member member4 = new Member("4", "테스트4", 4, "패스워드4");
+            Member member5 = new Member("5", "테스트5", 5, "패스워드5");
+            Member member6 = new Member("6", "테스트6", 6, "패스워드6");
+            Member member7 = new Member("7", "테스트7", 7, "패스워드7");
+            Member member8 = new Member("8", "테스트8", 8, "패스워드8");
+            Member member9 = new Member("9", "테스트9", 9, "패스워드9");
+
+            
+            member1.setTeam(teamA);
+            member4.setTeam(teamA);
+            member7.setTeam(teamA);
+            member8.setTeam(teamA);
+            
+            member2.setTeam(teamB);
+            member3.setTeam(teamB);
+            member5.setTeam(teamB);
+            member6.setTeam(teamB);
+            member9.setTeam(teamB);
+            
+
+            em.persist(member1);
+            em.persist(member2);
+            em.persist(member3);
+            em.persist(member4);
+            em.persist(member5);
+            em.persist(member6);
+            em.persist(member7);
+            em.persist(member8);
+            em.persist(member9);
+
+
+            TypedQuery<Long> queryCount = em.createQuery("Select Count(m) From Member m", Long.class);
+            Long countTotal = queryCount.getSingleResult();
+            
+            assertThat(countTotal, is(9L));
+
+            
+            queryCount = em.createQuery("Select Count(m) From Member m Where m.team = :teamId", Long.class).setParameter("teamId", teamA);
+            Long countA = queryCount.getSingleResult();
+
+            queryCount = em.createQuery("Select Count(m) From Member m Where m.team = :teamId", Long.class).setParameter("teamId", teamB);
+            Long countB = queryCount.getSingleResult();
+
+            assertThat(countTotal, is(countA + countB));
+            assertThat(countA, is(4L));
+            assertThat(countB, is(5L));
+            
+            TypedQuery<Long> querySumAge = em.createQuery("Select Sum(m.userAge) From Member m", Long.class);
+
+            Long sumAge = querySumAge.getSingleResult();
+
+            List<Object[]> sumList = em.createQuery("Select m.team, Sum(m.userAge) as age, Max(m.userAge) as mage, Min(m.userAge) as miage From Member m Group By m.team Order By m.team").getResultList();
+
+            assertThat(sumAge, is(45L));
+            assertThat(sumList.size(), is(2));
+            // Sum
+            assertThat((Long)((sumList.get(0))[1]), is(20L));
+            assertThat((Long)((sumList.get(1))[1]), is(25L));
+
+            // Max
+            assertThat((Long)((sumList.get(0))[2]), is(8));
+            assertThat((Long)((sumList.get(1))[2]), is(9));
+
+            // Min
+            assertThat((Long)((sumList.get(0))[3]), is(1));
+            assertThat((Long)((sumList.get(1))[3]), is(2));
+
+        } catch(Exception e) {
+            logger.error("Err Msg : " + e.toString());
+        } finally {
+            tx.rollback();
+            em.close();
+        } 
+    }
+
 }
