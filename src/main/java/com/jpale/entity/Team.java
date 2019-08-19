@@ -41,6 +41,9 @@ public class Team {
         createDate = new Date();
     }
 
-    @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    // 고아 객체 불허(Member의 Team을 null로 하면, Member를 삭제)
+    // @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    // 고아 객체 허용
+    @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Member> memberList;
 }

@@ -171,4 +171,86 @@ public class TeamJpaTest {
         }
     }
 
+    
+    @Test
+    public void subqueryTest() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+
+            Team team = new Team("A", "Team A");
+            Team team2 = new Team("B", "Team B");
+
+            em.persist(team);
+            em.persist(team2);
+
+            Member member1 = em.find(Member.class, "1");
+            Member member2 = em.find(Member.class, "2");
+            Member member3 = em.find(Member.class, "3");
+            Member member4 = em.find(Member.class, "4");
+            Member member5 = em.find(Member.class, "5");
+
+            member1.setTeam(team);
+            // member2.setTeam(team2);
+            member3.setTeam(team);
+            member4.setTeam(team);
+
+            // 회원이 존재하는 Team
+            String query = "Select t From Team t Where (Select Count(m) From Member m Where t = m.team ) > 0 ";
+
+            List<Team> teamList = em.createQuery(query, Team.class).getResultList();
+
+            assertThat(teamList.size(), is(1));
+
+            query = "Select t From Team t Where t.memberList.size > 0 ";
+            teamList = em.createQuery(query, Team.class).getResultList();
+
+            assertThat(teamList.size(), is(1));
+
+            // 70 이상 User 없는 Team 수
+            query = "Select Count(t) From Team t Where t Not In (Select t2 From Team t2 Join t2.memberList m2 Where m2.userAge >= 70) ";
+
+            Long count = em.createQuery(query, Long.class).getSingleResult();
+            
+            assertThat(count, is(2L));
+
+            // Team Member가 2~20 사이 
+            query = "Select Count(t) From Team t Where t.memberList.size Between 2 And 20";
+
+            count = em.createQuery(query, Long.class).getSingleResult();
+            
+            assertThat(count, is(1L));
+
+            query = "Select Count(t) From Team t Where t.memberList is Empty";
+
+            count = em.createQuery(query, Long.class).getSingleResult();
+            
+            assertThat(count, is(1L));
+
+            query = "Select t From Team t Where :memberParam member of t.memberList";
+            Team queryTeam = em.createQuery(query, Team.class).setParameter("memberParam", member1).getSingleResult();
+
+            assertThat(queryTeam.getName(), is("Team A"));
+
+            query = "Select t From Team t Where upper(t.name) = 'TEAM A' ";
+            queryTeam = em.createQuery(query, Team.class).getSingleResult();
+
+            assertThat(queryTeam.getId(), is("A"));
+
+            // "Select Count(t) From Team t Where t.memberList is Not Empty"와 동일
+            query = "Select Count(t) From Team t Where size(t.memberList) > 0 ";
+
+            count = em.createQuery(query, Long.class).getSingleResult();
+
+            assertThat(count, is(1L));
+
+        } catch(Exception e) {
+            logger.error("Err Msg : " + e.toString());
+        } finally {
+            tx.rollback();
+            em.close();
+        } 
+    }
 }
