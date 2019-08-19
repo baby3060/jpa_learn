@@ -50,7 +50,26 @@ JPA 학습 테스트용
 >> Join으로 묶지 않고, 각 엔티티별로 연관관계가 존재할 때에는 @ElementCollection과 @CollectionTable 애노테이션을 사용할 수 있음.
 >>> @ElementCollection로 관리할 때는 무조건 해당 하는 키의 컬렉션을 한 번 정리 후에 다시 Insert한다.
 
+> Grouping
+>> Sum은 Long. Max, Min은 Integer
+
 > 페치 조인 : 최적화를 위한 조인. 지연로딩을 설정해도 지연로딩이 발생하지 않음.
 >> 별칭을 사용할 수 없음.
 >> 컬렉션 페치 조인 시 JPA에서 제공하는 페이징 API 사용 못 함.
 >> 둘 이상의 컬렉션을 페치 못 함
+
+> NamedQuery XML에서 사용 시 
+>> persistence.xml에 그 수 만큼 mapping-xml 태그 갖다 붙여도됨
+>> xml에서 &amp;, &lt; &gt; 을 쉽게 사용하기 위해 다음과 같이 사용
+<pre>
+    <code>
+        &lt;named-query name="[]"&gt;
+        &lt;query&gt;&lt;![CDATA[
+            Select m
+            From Member m 
+            Where m.userAge &gt; :userAge
+        ]]&gt;
+        &lt;/query&gt;
+    &lt;/named-query&gt;
+    </code>
+</pre>

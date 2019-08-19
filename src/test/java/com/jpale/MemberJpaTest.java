@@ -97,7 +97,7 @@ public class MemberJpaTest {
         }
     }
 
-    // @Test
+   @Test
     public void updateTest() {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -145,7 +145,7 @@ public class MemberJpaTest {
         }
     }
 
-    // @Test
+   @Test
     public void deleteTest() {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -202,7 +202,7 @@ public class MemberJpaTest {
         }
     }
 
-    // @Test
+   @Test
     public void countTest() {
         EntityManager em = emf.createEntityManager();
 
@@ -214,7 +214,7 @@ public class MemberJpaTest {
         em.close();
     }
 
-    // @Test
+   @Test
     public void insertTest() {
 
         EntityManager em = emf.createEntityManager();
@@ -247,7 +247,7 @@ public class MemberJpaTest {
         }
     }
 
-    // @Test
+   @Test
     public void listTest() {
         EntityManager em = emf.createEntityManager();
 
@@ -294,7 +294,7 @@ public class MemberJpaTest {
         assertThat(m1.getPassword(), is(m2.getPassword()));
     }
 
-    // @Test
+   @Test
     public void collectionTest() {
         EntityManager em = emf.createEntityManager();
 
@@ -328,15 +328,13 @@ public class MemberJpaTest {
             count = ((BigInteger)query.getSingleResult()).longValue();
             assertThat(count, is(2L));
 
-        } catch(Exception e) {
-            logger.error("Err Msg : " + e.toString());
         } finally {
             tx.rollback();
             em.close();
         }
     }
     
-    // @Test
+   @Test
     public void pagingTest() {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -374,15 +372,13 @@ public class MemberJpaTest {
                 assertThat(resultList.get(i).getUserId(), is(String.valueOf((10 + i + 1))));
             }
 
-        } catch(Exception e) {
-            logger.error("Err Msg : " + e.toString());
         } finally {
             tx.rollback();
             em.close();
         } 
     }
 
-    // @Test
+   @Test
     public void groupingTest() {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -451,31 +447,33 @@ public class MemberJpaTest {
 
             Long sumAge = querySumAge.getSingleResult();
 
+            
             List<Object[]> sumList = em.createQuery("Select m.team, Sum(m.userAge) as age, Max(m.userAge) as mage, Min(m.userAge) as miage From Member m Group By m.team Order By m.team").getResultList();
 
             assertThat(sumAge, is(45L));
             assertThat(sumList.size(), is(2));
+            
             // Sum
+            // Sum의 경우 Long
             assertThat((Long)((sumList.get(0))[1]), is(20L));
             assertThat((Long)((sumList.get(1))[1]), is(25L));
-
+            
             // Max
-            assertThat((Long)((sumList.get(0))[2]), is(8));
-            assertThat((Long)((sumList.get(1))[2]), is(9));
-
+            // Max와 Min은 Integer
+            assertThat((Integer)((sumList.get(0))[2]), is(8));
+            assertThat((Integer)((sumList.get(1))[2]), is(9));
+            
             // Min
-            assertThat((Long)((sumList.get(0))[3]), is(1));
-            assertThat((Long)((sumList.get(1))[3]), is(2));
-
-        } catch(Exception e) {
-            logger.error("Err Msg : " + e.toString());
+            assertThat((Integer)((sumList.get(0))[3]), is(1));
+            assertThat((Integer)((sumList.get(1))[3]), is(2));
+            
         } finally {
             tx.rollback();
             em.close();
         } 
     }
 
-    // @Test
+   @Test
     public void joinTest() {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -523,15 +521,13 @@ public class MemberJpaTest {
             teamList = em.createQuery(query, Team.class).getResultList();
 
             assertThat(teamList.size(), is(1));
-        } catch(Exception e) {
-            logger.error("Err Msg : " + e.toString());
         } finally {
             tx.rollback();
             em.close();
         } 
     }
 
-    @Test
+   @Test
     public void subqueryTest() {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -580,16 +576,19 @@ public class MemberJpaTest {
 
             member2.setTeam(team2);
 
+            
             memberList = em.createQuery(query, Member.class).getResultList();
             // Team A에 속한 멤버
             assertThat(memberList.size(), is(3));
 
+            
             query = "Select m From Member m Where m.team = Any (Select t From Team t Where t.name = 'Team B') ";
 
             memberList = em.createQuery(query, Member.class).getResultList();
             // Team B에 속한 멤버
             assertThat(memberList.size(), is(1));
 
+            
             member2.setTeam(null);
 
             // 20 이하의 Member가 있는 Team의 수
@@ -599,13 +598,14 @@ public class MemberJpaTest {
             
             assertThat(count, is(1L));
 
+            
             // Team이 비어있는 Member의 수
             query = "Select Count(m) From Member m Where m.team Is Null ";
 
             count = em.createQuery(query, Long.class).getSingleResult();
 
             assertThat(count, is(2L));
-
+            
             query = "Select Case When m.userAge Between 1 And 10 Then '아동' " + 
                     "            When m.userAge > 11 And m.userAge <= 18 Then '청소년' " +
                     "            Else '성인' " +
@@ -615,13 +615,81 @@ public class MemberJpaTest {
             String result = em.createQuery(query, String.class).setParameter("userId", member2.getUserId()).getSingleResult();
 
             assertThat(result, is("성인"));
-
-            query = "Select Coalesce(m.team.name, 'Not Team') From Member m Where m.userId = :userId ";
+            
+            query = "Select Coalesce(t.name, 'Not Team') From Member m left outer join m.team t Where m.userId = :userId ";
             result = em.createQuery(query, String.class).setParameter("userId", member2.getUserId()).getSingleResult();
             assertThat(result, is("Not Team"));
+            
+        } finally {
+            tx.rollback();
+            em.close();
+        } 
+    }
 
-        } catch(Exception e) {
-            logger.error("Err Msg : " + e.toString());
+    @Test
+    public void namedQueryTest() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+
+            Member member1 = new Member("1", "테스트1", 15, "패스워드1");
+            Member member2 = new Member("2", "테스트2", 20, "패스워드2");
+            Member member3 = new Member("3", "테스트3", 43, "패스워드3");
+            Member member4 = new Member("4", "테스트4", 25, "패스워드4");
+            Member member5 = new Member("5", "테스트5", 16, "패스워드5");
+
+            Address address = new Address("Busan", "S", "A");
+            Address address2 = new Address("Seoul", "G", "B");
+
+            Team team = new Team("A", "Team A");
+            Team team2 = new Team("B", "Team B");
+
+            em.persist(team);
+            em.persist(team2);
+
+            em.persist(member1);
+            em.persist(member2);
+            em.persist(member3);
+            em.persist(member4);
+            em.persist(member5);
+
+            member1.setAddress(address);
+            member2.setAddress(address2);
+            member3.setAddress(address);
+            member4.setAddress(address);
+            member5.setAddress(address);
+
+            member1.setTeam(team);
+            member3.setTeam(team);
+            member4.setTeam(team);
+
+            List<Member> memberList = em.createNamedQuery("Member.notExistTeam", Member.class).getResultList();
+
+            assertThat(memberList.size(), is(2));
+            
+            
+            Long count = em.createNamedQuery("Member.countAllTeamId", Long.class).setParameter("team", team2).getSingleResult();
+
+            assertThat(count, is(0L));
+
+            
+            List<Member> memberListB = em.createNamedQuery("Member.addressLike", Member.class).setParameter("city", "B").getResultList();
+            List<Member> memberListS = em.createNamedQuery("Member.addressLike", Member.class).setParameter("city", "S").getResultList();
+
+            
+            assertThat(memberListB.size(), is(4));
+            assertThat(memberListS.size(), is(1));
+            
+            
+            // XML 매핑. Team이 있는 Member
+            memberList = em.createNamedQuery("Member.existTeam", Member.class).getResultList();
+            assertThat(memberList.size(), is(3));
+
+            memberList = em.createNamedQuery("Member.overAge", Member.class).setParameter("userAge", 20).getResultList();
+            assertThat(memberList.size(), is(2));
+            
         } finally {
             tx.rollback();
             em.close();

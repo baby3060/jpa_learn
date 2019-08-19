@@ -5,7 +5,13 @@
     xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence 
                         http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
 >
+
     <persistence-unit name="learningPersistance">
+        
+
+        <mapping-file>META-INF/orm/memberNamedQuery.xml</mapping-file>
+        <mapping-file>META-INF/orm/teamNamedQuery.xml</mapping-file>
+        
         <properties>
             <!-- db 커넥션 정보 -->
             <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />

@@ -15,6 +15,11 @@ import javax.persistence.*;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "Member.notExistTeam", query = "Select m From Member m Where m.team Is Null"),
+    @NamedQuery(name = "Member.countAllTeamId", query = "Select Count(m.userId) From Member m Where m.team = :team"),
+    @NamedQuery(name = "Member.addressLike", query = "Select m From Member m Where m.address.city Like :city || '%' ")
+})
 @Table(name="MEMBER")
 public class Member {
     @Id
