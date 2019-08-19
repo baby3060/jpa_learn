@@ -97,7 +97,7 @@ public class MemberJpaTest {
         }
     }
 
-    // @Test
+    @Test
     public void updateTest() {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -145,7 +145,7 @@ public class MemberJpaTest {
         }
     }
 
-    // @Test
+    @Test
     public void deleteTest() {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -202,7 +202,7 @@ public class MemberJpaTest {
         }
     }
 
-    // @Test
+    @Test
     public void countTest() {
         EntityManager em = emf.createEntityManager();
 
@@ -214,7 +214,7 @@ public class MemberJpaTest {
         em.close();
     }
 
-    // @Test
+    @Test
     public void insertTest() {
 
         EntityManager em = emf.createEntityManager();
@@ -247,7 +247,7 @@ public class MemberJpaTest {
         }
     }
 
-    // @Test
+    @Test
     public void listTest() {
         EntityManager em = emf.createEntityManager();
 
@@ -294,7 +294,7 @@ public class MemberJpaTest {
         assertThat(m1.getPassword(), is(m2.getPassword()));
     }
 
-    // @Test
+    @Test
     public void collectionTest() {
         EntityManager em = emf.createEntityManager();
 
@@ -336,7 +336,7 @@ public class MemberJpaTest {
         }
     }
     
-    // @Test
+    @Test
     public void pagingTest() {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -475,4 +475,61 @@ public class MemberJpaTest {
         } 
     }
 
-}
+    @Test
+    public void joinTest() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+
+            Member member1 = new Member("1", "테스트1", 1, "패스워드1");
+            Member member2 = new Member("2", "테스트2", 2, "패스워드2");
+            Member member3 = new Member("3", "테스트3", 3, "패스워드3");
+
+            Team team = new Team("1111", "팀1");
+            Team team2 = new Team("2222", "팀2");
+
+            em.persist(team);
+            em.persist(team2);
+
+            member1.setTeam(team);
+            member2.setTeam(team2);
+            member3.setTeam(team);
+
+            em.persist(member1);
+            em.persist(member2);
+            em.persist(member3);
+
+            // Entity로 m만 호출하였음. Team은 호출 안 함
+            String query = "Select m From Member m join fetch m.team Order By m.userAge";
+
+            List<Member> memberList = em.createQuery(query, Member.class).getResultList();
+
+            for(Member member : memberList) {
+                assertThat(member.getTeam(), is(not(nullValue())));
+            }
+
+            query = "Select t From Team t join fetch t.memberList Where t.name = '팀1' ";
+            
+            List<Team> teamList = em.createQuery(query, Team.class).getResultList();
+
+            // 멤버가 2이니까 2
+            assertThat(teamList.size(), is(2));
+
+            query = "Select distinct t From Team t join fetch t.memberList Where t.name = '팀1' ";
+
+            // Team 하나만 호출해왔음
+            teamList = em.createQuery(query, Team.class).getResultList();
+
+            assertThat(teamList.size(), is(1));
+        } catch(Exception e) {
+            logger.error("Err Msg : " + e.toString());
+        } finally {
+            tx.rollback();
+            em.close();
+        } 
+    }
+
+    
+}   
