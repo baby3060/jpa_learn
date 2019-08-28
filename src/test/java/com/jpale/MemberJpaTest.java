@@ -14,6 +14,7 @@ import com.jpale.entity.*;
 import com.jpale.common.*;
 
 import javax.persistence.*;
+import javax.persistence.criteria.*;
 
 import java.util.*;
 
@@ -32,11 +33,6 @@ public class MemberJpaTest {
 
     @Before
     public void init() {
-        deleteAll();
-    }
-
-    @After
-    public void close() {
         deleteAll();
     }
 
@@ -695,4 +691,192 @@ public class MemberJpaTest {
             em.close();
         } 
     }
+
+    
+    @Test
+    public void criteriaTest() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+
+            Member member1 = new Member("1", "테스트1", 15, "패스워드1");
+            Member member2 = new Member("2", "테스트2", 20, "패스워드2");
+            Member member3 = new Member("3", "테스트3", 43, "패스워드3");
+            Member member4 = new Member("4", "테스트4", 25, "패스워드4");
+            Member member5 = new Member("5", "테스트5", 16, "패스워드5");
+            
+            em.persist(member1);
+            em.persist(member2);
+            em.persist(member3);
+            em.persist(member4);
+            em.persist(member5);
+
+            // Query Builder 생성
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            // Member 형식으로 된 Criteria 생성하기
+            CriteriaQuery<Member> cq = cb.createQuery(Member.class);
+
+            // From
+            Root<Member> root = cq.from(Member.class);
+            // Select m From Member m
+            cq.select(root);
+
+            TypedQuery<Member> query = em.createQuery(cq);
+            List<Member> memberList = query.getResultList();
+
+            assertThat(memberList.size(), is(5));
+
+            for( int i = 0; i < memberList.size(); i++ ) {
+                Member member = memberList.get(i);
+
+                assertThat(member.getUserId(), is(String.valueOf((i + 1))));
+                assertThat(member.getUserName(), is("테스트" + String.valueOf((i + 1))));
+                assertThat(member.getPassword(), is("패스워드" + String.valueOf((i + 1))));
+            }
+
+            // 값보다 더 작은 조건
+            Predicate ageLt = cb.lessThan(root.get(Member_.userAge), 20);
+
+            cq.where(ageLt).orderBy(cb.desc(root.get("userAge")));
+            
+            query = em.createQuery(cq);
+
+            memberList = query.getResultList();
+
+            assertThat(memberList.size(), is(2));
+
+            assertThat(memberList.get(0).getUserAge(), is(16));
+            assertThat(memberList.get(1).getUserAge(), is(15));
+
+        } finally {
+            tx.rollback();
+            em.close();
+        }    
+    }
+    
+    @Test
+    public void criteriaQueryTest() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+
+            Member member1 = new Member("1", "테스트1", 15, "패스워드1");
+            Member member2 = new Member("2", "테스트2", 20, "패스워드2");
+            Member member3 = new Member("3", "테스트3", 43, "패스워드3");
+            Member member4 = new Member("4", "테스트4", 25, "패스워드4");
+            Member member5 = new Member("5", "테스트5", 16, "패스워드5");
+
+            Address address = new Address("Busan", "S", "A");
+            Address address2 = new Address("Seoul", "G", "B");
+
+            Team team = new Team("A", "Team A");
+            Team team2 = new Team("B", "Team B");
+
+            em.persist(team);
+            em.persist(team2);
+
+            em.persist(member1);
+            em.persist(member2);
+            em.persist(member3);
+            em.persist(member4);
+            em.persist(member5);
+
+            member1.setAddress(address);
+            member2.setAddress(address2);
+            member3.setAddress(address);
+            member4.setAddress(address);
+            member5.setAddress(address);
+
+            member1.setTeam(team);
+            member3.setTeam(team);
+            member4.setTeam(team);
+
+            // Query Builder 생성
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            // Tuple 형식으로 된 Criteria 생성하기
+            CriteriaQuery<Tuple> cq = cb.createQuery(Tuple.class);
+
+            // From
+            Root<Member> member = cq.from(Member.class);
+            
+            Join<Member, Team> teamJoin = member.join("team", JoinType.LEFT);
+
+            Predicate teamNull = cb.isNull(teamJoin.get("id"));
+
+            // Select
+            cq.multiselect(member, teamJoin).distinct(true)
+                                            .where(teamNull)
+                                            .orderBy(cb.asc(member.get("userAge")));
+
+            List<Tuple> memberList = em.createQuery(cq).getResultList();
+
+            for( Tuple tuple : memberList ) {
+                Member memberP = (Member)tuple.get(0);
+
+                logger.info(memberP.toString());
+            }
+
+
+            // Select m.userId, m.userName From Member m
+            // cq.multiselect(root.get("userId"), root.get("userName"))
+
+            // Select m.userId As id, m.userName As name From Member m
+            // cq.multiselect(root.get("userId").alias("id"), root.get("userName").alias("name"))
+
+            // select distint m.userName, m.userAge From Member m
+            // cq.multiselect(root.get("userName"), root.get("userAge")).distinct(true)
+
+            // construct()를 이용해서 새로운 객체로 생성할 수 있음.
+            
+            // Group By m.team.name
+            // cq.groupBy(root.get("team").get("name"));
+
+
+            CriteriaQuery<Member> cqMember = cb.createQuery(Member.class);
+
+            // Select Avg(m2.userAge) From Member m2
+            Subquery<Double> avgQuery = cqMember.subquery(Double.class);
+            member = avgQuery.from(Member.class);
+            avgQuery.select(cb.avg(member.get(Member_.userAge)));
+
+            member = cqMember.from(Member.class);
+            // Select m From Member m >= (위 쿼리)
+            cqMember.select(member).where(cb.ge(member.get(Member_.userAge), avgQuery));
+
+            List<Member> mList = em.createQuery(cqMember).getResultList();
+
+            assertThat(mList.size(), is(2));
+
+            cqMember = cb.createQuery(Member.class);
+            member = cqMember.from(Member.class);
+
+            Predicate likeCond = cb.like(member.get("userName"), cb.parameter(String.class, "userName"));
+
+            // Member.address.city를 조회 조건에
+            Predicate equalCond = cb.equal(member.get("address").get("city"), cb.parameter(String.class, "city"));
+            
+            // Or 조건
+            Predicate orCond = cb.or(likeCond, equalCond);
+
+            cqMember.select(member).where(orCond);
+
+            mList = em.createQuery(cqMember).setParameter("userName", "%1%").setParameter("city", "Busan").getResultList();
+
+            assertThat(mList.size(), is(4));
+
+        } catch(Exception e) {
+            logger.error(e.getMessage());
+        } finally {
+            tx.rollback();
+            em.close();
+        }    
+    }
+
+    
 }   

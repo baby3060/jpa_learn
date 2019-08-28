@@ -73,3 +73,6 @@ JPA 학습 테스트용
     &lt;/named-query&gt;
     </code>
 </pre>
+
+> Criteria 사용할 때 multiselect 사용 시 Object[] 타입이나, Tuple로 받아와서 파싱
+> CriteriaQuery는 Query 문 작성 시 필요한 것들을 제공해주는 Utility

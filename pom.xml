@@ -65,6 +65,14 @@
         <version>5.4.2.Final</version>
     </dependency>
 
+    <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-jpamodelgen -->
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-jpamodelgen</artifactId>
+        <version>5.4.4.Final</version>
+    </dependency>
+
+
     <!-- Hibernate에서 POOL을 관리하기 위해 c3p0 설정 시 -->
     <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-c3p0 -->
     <dependency>
@@ -147,6 +155,11 @@
           <source>1.8</source>
           <target>1.8</target>
           <compilerVersion>1.8</compilerVersion>
+          <!--
+          <compilerArguments>
+            <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+          </compilerArguments>
+          -->
         </configuration>
       </plugin>
 
